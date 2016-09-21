@@ -2,28 +2,34 @@
 
 whatzapWindow::whatzapWindow() : QObject()
 {
+    //Main Interface
     view = new QWebEngineView();
     webSettings = view->settings();
     webSettings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
     view->setUrl(QUrl(QStringLiteral("https://web.whatsapp.com")));
+
+    //Setup Tray Icon
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setIcon(QIcon(":/icons/icon.png"));
+    trayIcon->show(); //TODO: Add a menu to Systray Right Click, Left Click to show/hide
+
+    //Setup Event Handlers for Page
     connect(view->page(),
                SIGNAL(featurePermissionRequested(const QUrl&, QWebEnginePage::Feature)),
                SLOT(featurePermissionRequested(const QUrl&, QWebEnginePage::Feature)));
     connect(view->page()->profile(), SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
                     this, SLOT(downloadRequested(QWebEngineDownloadItem*)));
-    view->resize(800, 600);
 
+    //Setup Window
+    view->resize(800, 600); //TODO: Remember Window Size and Position
+    view->setWindowIcon(QIcon(":/icons/icon.png"));
     view->show();
-    view->page()->setFeaturePermission(view->page()->url(), QWebEnginePage::MediaAudioVideoCapture, QWebEnginePage::PermissionGrantedByUser);
-    view->page()->setFeaturePermission(view->page()->url(), QWebEnginePage::MediaAudioCapture, QWebEnginePage::PermissionGrantedByUser);
-    view->page()->setFeaturePermission(view->page()->url(), QWebEnginePage::MediaVideoCapture, QWebEnginePage::PermissionGrantedByUser);
 }
 
 void whatzapWindow::featurePermissionRequested(const QUrl & securityOrigin,
-    QWebEnginePage::Feature feature)
+                                               QWebEnginePage::Feature feature)
 {
-
-    // grant permission
+    // Grant permission
     switch (feature) {
     case QWebEnginePage::MediaAudioCapture:
     case QWebEnginePage::MediaVideoCapture:
@@ -35,11 +41,17 @@ void whatzapWindow::featurePermissionRequested(const QUrl & securityOrigin,
     default:
         qDebug() << securityOrigin << feature;
     }
-
 }
 
 void whatzapWindow::downloadRequested(QWebEngineDownloadItem *download)
 {
-    //Saves to ~/Downloads!
+    //Saves to ~/Downloads! TODO: Set Location
+    connect(download, SIGNAL(finished()), this, SLOT(showDownloadFinished()));
     download->accept();
+}
+
+void whatzapWindow::showDownloadFinished()
+{
+    qDebug() << "Downloaded";
+    trayIcon->showMessage("Downloaded Completed", "Download Finished");
 }

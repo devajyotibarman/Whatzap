@@ -8,3 +8,6 @@ TARGET = Whatzap
 
 HEADERS += \
     whatzapwindow.h
+
+RESOURCES += \
+    whatzap.qrc
