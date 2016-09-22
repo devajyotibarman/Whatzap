@@ -30,3 +30,6 @@ Added Download Location Option
 Added Tray Menu
 
 Added Process Level locking enabling only one instance to run
+
+
+Added Minor Fixes
