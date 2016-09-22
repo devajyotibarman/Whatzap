@@ -86,7 +86,7 @@ whatzapWindow::whatzapWindow() : QObject()
     webSettings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
 
     //Setup URL
-    view->setUrl(QUrl(QStringLiteral("https://web.whatsapp.com")));
+    view->setUrl(QUrl(QStringLiteral("https://web.whatsapp.com/")));
 
     //Setup Tray Menu Actions
     Settings = new QAction("Settings");
@@ -122,6 +122,7 @@ whatzapWindow::whatzapWindow() : QObject()
                SLOT(featurePermissionRequested(const QUrl&, QWebEnginePage::Feature)));
     connect(view->page()->profile(), SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
                     this, SLOT(downloadRequested(QWebEngineDownloadItem*)));
+//    emit view->page()->featurePermissionRequested(view->page()->url(), QWebEnginePage::Notifications);
     view->installEventFilter(this); //Get all Events, filter the ones we want in Event Handler
 
     //Setup Window
@@ -131,9 +132,10 @@ whatzapWindow::whatzapWindow() : QObject()
     view->show();
 }
 
-void whatzapWindow::featurePermissionRequested(const QUrl & securityOrigin,
+void whatzapWindow::featurePermissionRequested(const QUrl &securityOrigin,
                                                QWebEnginePage::Feature feature)
 {
+     qDebug() << securityOrigin << feature;
     // Grant permission
     switch (feature) {
     case QWebEnginePage::MediaAudioCapture:
@@ -151,8 +153,10 @@ void whatzapWindow::featurePermissionRequested(const QUrl & securityOrigin,
 void whatzapWindow::downloadRequested(QWebEngineDownloadItem *download)
 {
     connect(download, SIGNAL(finished()), this, SLOT(showDownloadFinished()));
-    download->setPath(downloadPath.append(download->path().remove(1, download->path().lastIndexOf('/'))));
-    qDebug() << downloadPath;
+    QString a = downloadPath;
+    a.append(download->path().remove(1, download->path().lastIndexOf('/')));
+    download->setPath(a);
+//    qDebug() << a;
     download->accept();
 }
 
@@ -164,7 +168,7 @@ void whatzapWindow::showDownloadFinished()
 
 bool whatzapWindow::eventFilter(QObject *obj, QEvent *event)
 {
-    int ret = 0;
+    int ret = QMessageBox::Ok;
 
     if(obj == view)
     {
