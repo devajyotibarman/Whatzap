@@ -90,20 +90,29 @@ whatzapWindow::whatzapWindow() : QObject()
 
     //Setup Tray Menu Actions
     Settings = new QAction("Settings");
+    Settings->setIcon(QIcon::fromTheme("emblem-system"));
     connect(Settings, SIGNAL(triggered(bool)), this, SLOT(openSettingsDialog()));
 
+    Reload = new QAction("Reload Window");
+    Reload->setIcon(QIcon::fromTheme("view-refresh"));
+    connect(Reload, SIGNAL(triggered(bool)), this, SLOT(reloadWindow()));
+
     Show_Hide = new QAction("Show/Hide");
+    Show_Hide->setIcon(QIcon::fromTheme("window-close"));
     connect(Show_Hide, SIGNAL(triggered(bool)), this, SLOT(windowShowHide()));
 
     About = new QAction("About");
+    About->setIcon(QIcon::fromTheme("system-help"));
     connect(About, SIGNAL(triggered(bool)), this, SLOT(openAboutDialog()));
 
     Exit = new QAction("Exit");
+    Exit->setIcon(QIcon::fromTheme("application-exit"));
     connect(Exit, SIGNAL(triggered(bool)), this, SLOT(quitProgram()));
 
     //Setup Tray Menu
     trayMenu = new QMenu();
     trayMenu->addAction(Settings);
+    trayMenu->addAction(Reload);
     trayMenu->addAction(Show_Hide);
     trayMenu->addAction(About);
     trayMenu->addAction(Exit);
@@ -130,6 +139,11 @@ whatzapWindow::whatzapWindow() : QObject()
     view->move(lastWindowXpos, lastWindowYpos);
     view->setWindowIcon(QIcon(":/icons/icon.png"));
     view->show();
+}
+
+whatzapWindow::~whatzapWindow()
+{
+    delete view;
 }
 
 void whatzapWindow::featurePermissionRequested(const QUrl &securityOrigin,
@@ -307,6 +321,11 @@ void whatzapWindow::openSettingsDialog()
     }
 }
 
+void whatzapWindow::reloadWindow()
+{
+    view->reload();
+}
+
 void whatzapWindow::openAboutDialog()
 {
 //    qDebug() << "Open About";
@@ -332,3 +351,4 @@ void whatzapWindow::quitProgram()
 {
     view->close();
 }
+

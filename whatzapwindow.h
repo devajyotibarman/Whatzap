@@ -29,6 +29,7 @@ class whatzapWindow:public QObject
 
 public:
     whatzapWindow();
+    ~whatzapWindow();
 private:
     QWebEngineView *view;
     QWebEngineView *secondView;
@@ -44,6 +45,7 @@ private:
     bool settingMinimize;
     QMenu *trayMenu;
     QAction *Settings;
+    QAction *Reload;
     QAction *Show_Hide;
     QAction *About;
     QAction *Exit;
@@ -55,6 +57,7 @@ private slots:
     void showDownloadFinished();
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
     void openSettingsDialog();
+    void reloadWindow();
     void openAboutDialog();
     void windowShowHide();
     void quitProgram();
