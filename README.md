@@ -14,9 +14,9 @@ A Whatsapp Web App built with Qt. It has most of the features working. Video upl
 
 **22-09-2016**
 
- - Added Preferences Dialog   
+ - Added Preferences Dialog
  - Added About Dialog
- - Added Minimize to Tray Option  
+ - Added Minimize to Tray Option
  - Added Ask on Close Option
  - Added Download Location Option
  - Added Tray Menu
@@ -29,3 +29,10 @@ A Whatsapp Web App built with Qt. It has most of the features working. Video upl
  - Added Reload Option to refresh WebEngineView
  - Added destructor
  - Added Nicer Readme
+
+**06-10-2016**
+
+ - Added Opening Links Functionality 
+ - Added New Icons 
+ - Cleaned up Initialization Files
+ - Moved Initialization and Display into two parts on Start up

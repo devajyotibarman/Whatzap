@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/icons">
-        <file>icon.png</file>
+        <file>browser-icon.svg</file>
+        <file>settings-icon.svg</file>
+        <file>main-icon.svg</file>
+        <file>about-icon.svg</file>
     </qresource>
 </RCC>

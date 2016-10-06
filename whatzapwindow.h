@@ -6,6 +6,7 @@
 #include <QWebEngineView>
 #include <QWebEngineSettings>
 #include <QWebEngineProfile>
+#include <QWebEnginePage>
 #include <QWebEngineDownloadItem>
 #include <QIcon>
 #include <QSystemTrayIcon>
@@ -23,17 +24,15 @@
 #include "preferencesdialog.h"
 #include "ui_preferencesdialog.h"
 
-class whatzapWindow:public QObject
+class whatzapWindow:public QWebEngineView
 {
     Q_OBJECT
 
 public:
     whatzapWindow();
     ~whatzapWindow();
+    void start();
 private:
-    QWebEngineView *view;
-    QWebEngineView *secondView;
-    QWebEngineSettings *webSettings;
     QSystemTrayIcon *trayIcon;
     QFile *iniFile;
     int lastWindowWidth;
@@ -52,7 +51,7 @@ private:
     QLockFile *lockFile;
 private slots:
     void featurePermissionRequested(const QUrl & securityOrigin,
-        QWebEnginePage::Feature feature);
+                                    QWebEnginePage::Feature feature);
     void downloadRequested(QWebEngineDownloadItem* download);
     void showDownloadFinished();
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -63,6 +62,7 @@ private slots:
     void quitProgram();
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
+    QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override;
 };
 
 #endif // WHATZAPWINDOW_H

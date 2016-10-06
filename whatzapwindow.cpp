@@ -1,6 +1,6 @@
 #include "whatzapwindow.h"
 
-whatzapWindow::whatzapWindow() : QObject()
+whatzapWindow::whatzapWindow() : QWebEngineView()
 {
     //Check For Running Processes
     lockFile = new QLockFile(QStandardPaths::locate(QStandardPaths::HomeLocation,
@@ -11,8 +11,6 @@ whatzapWindow::whatzapWindow() : QObject()
         qDebug() << "Could not acquire File Lock";
         exit(0);
     }
-    //Initialize Main Interface
-    view = new QWebEngineView();
 
     //Initialize Default Parameters
     lastWindowWidth = 800;
@@ -80,13 +78,18 @@ whatzapWindow::whatzapWindow() : QObject()
     settingMinimize = (line.toInt() ? true : false);
 //    qDebug() << settingMinimize;
     iniFile->close();
+}
 
-    //Setup Web Settings
-    webSettings = view->settings();
-    webSettings->setAttribute(QWebEngineSettings::PluginsEnabled, true);
+whatzapWindow::~whatzapWindow()
+{
+}
+
+void whatzapWindow::start()
+{
+    this->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
 
     //Setup URL
-    view->setUrl(QUrl(QStringLiteral("https://web.whatsapp.com/")));
+    this->setUrl(QUrl(QStringLiteral("https://web.whatsapp.com/")));
 
     //Setup Tray Menu Actions
     Settings = new QAction("Settings");
@@ -119,45 +122,40 @@ whatzapWindow::whatzapWindow() : QObject()
 
     //Setup Tray Icon
     trayIcon = new QSystemTrayIcon(this);
-    trayIcon->setIcon(QIcon(":/icons/icon.png"));
-    trayIcon->show(); //TODO: Add a menu to Systray Right Click.
+    trayIcon->setIcon(QIcon(":/icons/main-icon.svg"));
+    trayIcon->show();
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
     trayIcon->setContextMenu(trayMenu);
 
     //Setup Event Handlers for Page
-    connect(view->page(),
-               SIGNAL(featurePermissionRequested(const QUrl&, QWebEnginePage::Feature)),
-               SLOT(featurePermissionRequested(const QUrl&, QWebEnginePage::Feature)));
-    connect(view->page()->profile(), SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
-                    this, SLOT(downloadRequested(QWebEngineDownloadItem*)));
-//    emit view->page()->featurePermissionRequested(view->page()->url(), QWebEnginePage::Notifications);
-    view->installEventFilter(this); //Get all Events, filter the ones we want in Event Handler
+    connect(this->page(),
+            SIGNAL(featurePermissionRequested(const QUrl&, QWebEnginePage::Feature)),
+            SLOT(featurePermissionRequested(const QUrl&, QWebEnginePage::Feature)));
+    connect(this->page()->profile(), SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
+            this, SLOT(downloadRequested(QWebEngineDownloadItem*)));
+
+    this->installEventFilter(this); //Get all Events, filter the ones we want in Event Handler
+
 
     //Setup Window
-    view->resize(lastWindowWidth, lastWindowHeight);
-    view->move(lastWindowXpos, lastWindowYpos);
-    view->setWindowIcon(QIcon(":/icons/icon.png"));
-    view->show();
-}
-
-whatzapWindow::~whatzapWindow()
-{
-    delete view;
+    this->resize(lastWindowWidth, lastWindowHeight);
+    this->move(lastWindowXpos, lastWindowYpos);
+    this->setWindowIcon(QIcon(":/icons/main-icon.svg"));
+    this->show();
 }
 
 void whatzapWindow::featurePermissionRequested(const QUrl &securityOrigin,
                                                QWebEnginePage::Feature feature)
 {
-     qDebug() << securityOrigin << feature;
     // Grant permission
     switch (feature) {
     case QWebEnginePage::MediaAudioCapture:
     case QWebEnginePage::MediaVideoCapture:
     case QWebEnginePage::Notifications:
     case QWebEnginePage::MediaAudioVideoCapture:
-            view->page()->setFeaturePermission(view->page()->url(),
-                feature, QWebEnginePage::PermissionGrantedByUser);
+        this->page()->setFeaturePermission(this->page()->url(),
+                                           feature, QWebEnginePage::PermissionGrantedByUser);
         break;
     default:
         qDebug() << securityOrigin << feature;
@@ -184,20 +182,20 @@ bool whatzapWindow::eventFilter(QObject *obj, QEvent *event)
 {
     int ret = QMessageBox::Ok;
 
-    if(obj == view)
+    if(obj == this)
     {
         if (event->type() == QEvent::Resize)
         {
-//            qDebug() << "Resized to" << view->width() << view->height();
-            lastWindowWidth = view->width();
-            lastWindowHeight = view->height();
+//            qDebug() << "Resized to" << this->width() << this->height();
+            lastWindowWidth = this->width();
+            lastWindowHeight = this->height();
         }
 
         if (event->type() == QEvent::Move)
         {
-//            qDebug() << "Moved to" << view->x() << view->y();
-            lastWindowXpos = view->x();
-            lastWindowYpos = view->y();
+//            qDebug() << "Moved to" << this->x() << this->y();
+            lastWindowXpos = this->x();
+            lastWindowYpos = this->y();
         }
 
         if (event->type() == QEvent::Close)
@@ -206,7 +204,7 @@ bool whatzapWindow::eventFilter(QObject *obj, QEvent *event)
             {
                 QMessageBox msgBox;
                 msgBox.setText("Do you want to close Whatzap");
-                msgBox.setWindowIcon(QIcon(":/icons/icon.png"));
+                msgBox.setWindowIcon(QIcon(":/icons/main-icon.svg"));
                 msgBox.setWindowTitle("Closing Whatzap");
                 msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
                 msgBox.setDefaultButton(QMessageBox::Cancel);
@@ -216,19 +214,22 @@ bool whatzapWindow::eventFilter(QObject *obj, QEvent *event)
             if(ret == QMessageBox::Ok)
             {
 //                qDebug() << "Closing! Saving Preferences";
-                if (!iniFile->open(QIODevice::ReadWrite| QIODevice::Text))
+                if (!iniFile->open(QIODevice::ReadWrite| QIODevice::Text | QIODevice::Truncate))
                 {
                     qDebug() << "Failed to Open File" << iniFile->errorString();
                     exit(31);
                 }
                 QTextStream out(iniFile);
-                iniFile->reset();
+                iniFile->seek(0);
 
                 //Write Window Size and Position before Closing
                 out << lastWindowWidth << endl;
                 out << lastWindowHeight << endl;
                 out << lastWindowXpos << endl;
                 out << lastWindowYpos << endl;
+                out << downloadPath << endl;
+                out << settingClose << endl;
+                out << settingMinimize << endl;
                 iniFile->close();
                 lockFile->unlock();
             }
@@ -243,15 +244,15 @@ bool whatzapWindow::eventFilter(QObject *obj, QEvent *event)
         if (event->type() == QEvent::WindowStateChange)
         {
 //            qDebug() << event;
-            if(view->isMinimized())
+            if(this->isMinimized())
             {
 //                qDebug() << "Minimized";
                 if(settingMinimize == true)
                 {
-                    view->hide();
+                    this->hide();
                 }
             }
-            else if (view->isMaximized())
+            else if (this->isMaximized())
             {
 //                qDebug() << "Maximized";
             }
@@ -266,13 +267,13 @@ void whatzapWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
     {
     case QSystemTrayIcon::Trigger:
     case QSystemTrayIcon::DoubleClick:
-        if(view->isHidden())
+        if(this->isHidden())
         {
-            view->show();
+            this->show();
         }
         else
         {
-            view->hide();
+            this->hide();
         }
         break;
     default:
@@ -286,7 +287,7 @@ void whatzapWindow::openSettingsDialog()
 //    qDebug() << "Open Settings";
     //Show Preferences Dialog
     preferencesDialog p;
-    p.setWindowIcon(QIcon(":/icons/icon.png"));
+    p.setWindowIcon(QIcon(":/icons/settings-icon.svg"));
     if(p.exec() == QDialog::Accepted)
     {
         if (!iniFile->open(QIODevice::ReadWrite | QIODevice::Text))
@@ -323,7 +324,7 @@ void whatzapWindow::openSettingsDialog()
 
 void whatzapWindow::reloadWindow()
 {
-    view->reload();
+    this->reload();
 }
 
 void whatzapWindow::openAboutDialog()
@@ -331,24 +332,41 @@ void whatzapWindow::openAboutDialog()
 //    qDebug() << "Open About";
     //Show About Dialog
     aboutDialog a;
-    a.setWindowIcon(QIcon(":/icons/icon.png"));
+    a.setWindowIcon(QIcon(":/icons/about-icon.svg"));
     a.exec();
 }
 
 void whatzapWindow::windowShowHide()
 {
-    if(view->isHidden())
+    if(this->isHidden())
     {
-        view->show();
+        this->show();
     }
     else
     {
-        view->hide();
+        this->hide();
     }
 }
 
 void whatzapWindow::quitProgram()
 {
-    view->close();
+    this->close();
 }
 
+QWebEngineView *whatzapWindow::createWindow(QWebEnginePage::WebWindowType type)
+{
+//    qDebug() << "Clicked";
+    if(type == QWebEnginePage::WebBrowserWindow ||
+       type == QWebEnginePage::WebBrowserTab ||
+       type == QWebEnginePage::WebDialog ||
+       type == QWebEnginePage::WebBrowserBackgroundTab)
+    {
+//        qDebug() << "Opening New Window" << type;
+        QWebEngineView *secondView = new QWebEngineView();
+        secondView->setAttribute(Qt::WA_DeleteOnClose, true);
+        secondView->setWindowIcon(QIcon(":/icons/browser-icon.svg"));
+        secondView->show();
+        return secondView;
+    }
+    return NULL;
+}
