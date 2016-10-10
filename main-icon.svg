@@ -14,9 +14,9 @@
    version="1.1"
    inkscape:version="0.91 r13725"
    xml:space="preserve"
-   width="120.00011"
-   height="120.242"
-   viewBox="0 0 120.00011 120.242"
+   width="32"
+   height="31.999998"
+   viewBox="0 0 32.000001 31.999999"
    sodipodi:docname="main-icon.svg"><metadata
      id="metadata8"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
@@ -120,7 +120,7 @@
        x2="1"
        y2="0"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0,2098.6662,2098.6662,0,3700.85,-3044.0246)"
+       gradientTransform="matrix(0,7885.8694,7870.0057,0,12797.65,-13572.417)"
        spreadMethod="pad"
        id="linearGradient132"><stop
          style="stop-opacity:1;stop-color:#20b038"
@@ -183,7 +183,7 @@
        x2="1"
        y2="0"
        gradientUnits="userSpaceOnUse"
-       gradientTransform="matrix(0,2173.9249,2173.9249,0,3700.8568,-3081.6399)"
+       gradientTransform="matrix(0,8168.6586,8152.2261,0,12797.675,-13713.758)"
        spreadMethod="pad"
        id="linearGradient202"><stop
          style="stop-opacity:1;stop-color:#f9f9f9"
@@ -252,9 +252,9 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     inkscape:zoom="0.17696793"
-     inkscape:cx="1135.6279"
-     inkscape:cy="-398.52318"
+     inkscape:zoom="1.0289025"
+     inkscape:cx="-110.38327"
+     inkscape:cy="-30.683865"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -262,9 +262,10 @@
      id="g10"
      inkscape:groupmode="layer"
      inkscape:label="WhatsApp_Logo_1"
-     transform="matrix(1.25,0,0,-1.25,-741.15879,716.97372)"><g
+     transform="matrix(1.25,0,0,-1.25,-785.15885,672.85272)"><g
        id="g24"
-       transform="matrix(0.19354863,0,0,0.19354863,516.87652,423.77582)"><g
+       transform="matrix(0.05161292,0,0,0.05150909,607.84696,498.41507)"
+       style="opacity:0"><g
          id="g26"
          clip-path="url(#clipPath28)"><g
            id="g32"><g
@@ -312,7 +313,7 @@
              id="path118"
              inkscape:connector-curvature="0" /></g></g></g><g
        id="g120"
-       transform="matrix(0.19354863,0,0,0.19354863,516.87652,423.77582)"><g
+       transform="matrix(0.05161292,0,0,0.05150909,607.84696,498.41507)"><g
          id="g122"
          clip-path="url(#clipPath124)"><g
            id="g128"><g
@@ -322,7 +323,7 @@
                id="path138"
                inkscape:connector-curvature="0" /></g></g></g></g><g
        id="g140"
-       transform="matrix(0.19354863,0,0,0.19354863,516.87652,423.77582)"><g
+       transform="matrix(0.05161292,0,0,0.05150909,607.84696,498.41507)"><g
          id="g142"
          clip-path="url(#clipPath144)"><g
            id="g148"><g
@@ -345,7 +346,7 @@
                        mask="url(#mask172)"
                        id="image188" /></g></g></g></g></g></g></g></g><g
        id="g190"
-       transform="matrix(0.19354863,0,0,0.19354863,516.87652,423.77582)"><g
+       transform="matrix(0.05161292,0,0,0.05150909,607.84696,498.41507)"><g
          id="g192"
          clip-path="url(#clipPath194)"><g
            id="g198"><g
@@ -355,7 +356,7 @@
                id="path208"
                inkscape:connector-curvature="0" /></g></g></g></g><g
        id="g210"
-       transform="matrix(0.19354863,0,0,0.19354863,516.87652,423.77582)"><g
+       transform="matrix(0.05161292,0,0,0.05150909,607.84696,498.41507)"><g
          id="g212"
          clip-path="url(#clipPath214)"><g
            id="g218"><g

@@ -89,7 +89,7 @@ void whatzapWindow::start()
     this->settings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
 
     //Setup URL
-    this->setUrl(QUrl(QStringLiteral("https://web.whatsapp.com/")));
+    this->setUrl(QUrl(QStringLiteral("https://web.whatsapp.com")));
 
     //Setup Tray Menu Actions
     Settings = new QAction("Settings");
@@ -134,9 +134,12 @@ void whatzapWindow::start()
             SLOT(featurePermissionRequested(const QUrl&, QWebEnginePage::Feature)));
     connect(this->page()->profile(), SIGNAL(downloadRequested(QWebEngineDownloadItem*)),
             this, SLOT(downloadRequested(QWebEngineDownloadItem*)));
+    connect(this, SIGNAL(renderProcessTerminated(QWebEnginePage::RenderProcessTerminationStatus, int)),
+            this, SLOT(renderProcessTerminationHandler(QWebEnginePage::RenderProcessTerminationStatus, int)));
+
+//    emit this->page()->featurePermissionRequested(this->page()->url(), QWebEnginePage::Notifications);
 
     this->installEventFilter(this); //Get all Events, filter the ones we want in Event Handler
-
 
     //Setup Window
     this->resize(lastWindowWidth, lastWindowHeight);
@@ -149,12 +152,13 @@ void whatzapWindow::featurePermissionRequested(const QUrl &securityOrigin,
                                                QWebEnginePage::Feature feature)
 {
     // Grant permission
+//    qDebug() << securityOrigin << feature;
     switch (feature) {
     case QWebEnginePage::MediaAudioCapture:
     case QWebEnginePage::MediaVideoCapture:
     case QWebEnginePage::Notifications:
     case QWebEnginePage::MediaAudioVideoCapture:
-        this->page()->setFeaturePermission(this->page()->url(),
+        this->page()->setFeaturePermission(securityOrigin,
                                            feature, QWebEnginePage::PermissionGrantedByUser);
         break;
     default:
@@ -270,6 +274,8 @@ void whatzapWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
         if(this->isHidden())
         {
             this->show();
+            this->resize(lastWindowWidth-10, lastWindowHeight);
+            this->resize(lastWindowWidth+10, lastWindowHeight);
         }
         else
         {
@@ -325,6 +331,8 @@ void whatzapWindow::openSettingsDialog()
 void whatzapWindow::reloadWindow()
 {
     this->reload();
+    this->resize(lastWindowWidth-10, lastWindowHeight);
+    this->resize(lastWindowWidth+10, lastWindowHeight);
 }
 
 void whatzapWindow::openAboutDialog()
@@ -341,6 +349,8 @@ void whatzapWindow::windowShowHide()
     if(this->isHidden())
     {
         this->show();
+        this->resize(lastWindowWidth-10, lastWindowHeight);
+        this->resize(lastWindowWidth+10, lastWindowHeight);
     }
     else
     {
@@ -369,4 +379,38 @@ QWebEngineView *whatzapWindow::createWindow(QWebEnginePage::WebWindowType type)
         return secondView;
     }
     return NULL;
+}
+
+void whatzapWindow::renderProcessTerminationHandler(QWebEnginePage::RenderProcessTerminationStatus termStatus,
+                                                    int statusCode)
+{
+    qDebug() << "Render Process Terminated" << termStatus << statusCode;
+    bool reloadProcess = false;
+
+    switch (termStatus)
+    {
+        case QWebEnginePage::AbnormalTerminationStatus:
+        case QWebEnginePage::CrashedTerminationStatus:
+        case QWebEnginePage::KilledTerminationStatus:
+            reloadProcess = true;
+            break;
+        default:
+            qDebug() << "Render Process Terminated Normally" << termStatus << statusCode;
+            break;
+    }
+
+    if (reloadProcess == true)
+    {
+        QMessageBox *msgBox = new QMessageBox();
+        msgBox->setAttribute(Qt::WA_DeleteOnClose);
+        QString a = QString("Render Process Terminated. ");
+        a.append(QString("Termination Status: "));
+        a.append(QString::number(termStatus));
+        a.append(QString(" Status Code: "));
+        a.append(QString::number(statusCode));
+        msgBox->setText(a);
+        msgBox->show();
+
+        QTimer::singleShot(0, [this] { reload(); });
+    }
 }

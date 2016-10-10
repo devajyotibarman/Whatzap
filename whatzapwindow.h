@@ -18,6 +18,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QLockFile>
+#include <QTimer>
 
 #include "aboutdialog.h"
 #include "ui_aboutdialog.h"
@@ -60,6 +61,8 @@ private slots:
     void openAboutDialog();
     void windowShowHide();
     void quitProgram();
+    void renderProcessTerminationHandler(QWebEnginePage::RenderProcessTerminationStatus termStatus,
+                                         int statusCode);
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     QWebEngineView *createWindow(QWebEnginePage::WebWindowType type) override;

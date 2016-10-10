@@ -36,3 +36,8 @@ A Whatsapp Web App built with Qt. It has most of the features working. Video upl
  - Added New Icons 
  - Cleaned up Initialization Files
  - Moved Initialization and Display into two parts on Start up
+
+**10-10-2016**
+
+ - Added a fix for when App goes unresponsive
+ - Added a reload for when the Render Process Terminates unexpectedly
