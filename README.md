@@ -9,7 +9,7 @@ A Whatsapp Web App built with Qt. It has most of the features working. Video upl
 **21-09-2016**
 
  - Added Icon
- - Codecs are supported [Need to Add them to this]
+ - Codecs are supported if QtWebEngine is built with codecs supported
  - Added System Tray Icon with Download Notifications
 
 **22-09-2016**
@@ -41,3 +41,7 @@ A Whatsapp Web App built with Qt. It has most of the features working. Video upl
 
  - Added a fix for when App goes unresponsive
  - Added a reload for when the Render Process Terminates unexpectedly
+
+**10-12-2016**
+
+- Fixed an issue which kills the window when attaching a file.

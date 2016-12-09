@@ -43,6 +43,7 @@ private:
     QString downloadPath;
     bool settingClose;
     bool settingMinimize;
+    bool windowBlocked;
     QMenu *trayMenu;
     QAction *Settings;
     QAction *Reload;

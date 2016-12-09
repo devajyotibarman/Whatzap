@@ -251,7 +251,7 @@ bool whatzapWindow::eventFilter(QObject *obj, QEvent *event)
             if(this->isMinimized())
             {
 //                qDebug() << "Minimized";
-                if(settingMinimize == true)
+                if(settingMinimize == true && windowBlocked == false)
                 {
                     this->hide();
                 }
@@ -260,6 +260,16 @@ bool whatzapWindow::eventFilter(QObject *obj, QEvent *event)
             {
 //                qDebug() << "Maximized";
             }
+        }
+
+        if (event->type() == QEvent::WindowBlocked)
+        {
+            windowBlocked = true;
+        }
+
+        if (event->type() == QEvent::WindowUnblocked)
+        {
+            windowBlocked = false;
         }
     }
     return false;
@@ -279,7 +289,10 @@ void whatzapWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
         }
         else
         {
-            this->hide();
+            if(windowBlocked == false)
+            {
+                this->hide();
+            }
         }
         break;
     default:
@@ -354,7 +367,10 @@ void whatzapWindow::windowShowHide()
     }
     else
     {
-        this->hide();
+        if(windowBlocked == false)
+        {
+            this->hide();
+        }
     }
 }
 
